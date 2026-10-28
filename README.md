@@ -69,7 +69,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 - `_state/usage.json`：按 UTC 日期记录请求次数。每次请求前先写入；失败和超时也消耗当天额度，不自动重试。重复运行先读已有记录；当天更换模型或候选排序也不会重置额度。
 - `data/YYYY-MM-DD_AI_enhanced_Chinese.jsonl`：所有候选论文、推荐分数、摘要状态。名称沿用上游格式，部分记录没有 AI 字段时网页显示原摘要。
 - `data/YYYY-MM-DD_status.json`：公开的运行计数，用于排查成功、缓存和失败数量。
-- `_state` 与日期归档持久化到 `data` 分支；源码仍在 `main`，状态提交采用正常快进推送，不覆盖历史。
+- `_state` 与日期归档持久化到 `personal-data` 分支；源码仍在 `main`；使用独立的归档分支，避免继承上游作者的历史推荐数据。状态提交采用正常快进推送，不覆盖历史。
 - 摘要 API 失败时保留原摘要，页面显示对应状态；Zotero 凭据错误或文献库没有合格摘要时停止任务，避免生成看似有效的假推荐。
 - 网络读取状态分支失败时停止任务，不能把恢复失败误当成首次运行，否则会丢失额度记录。
 - 工作流结束时会保存部分状态。若手动删除状态分支、硬终止任务导致状态未保存，或者同时在多台本地机器使用独立状态，不能保证跨这些环境的额度；正常线上任务通过并发串行化避免相互覆盖。
@@ -82,7 +82,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory _site
 
 候选和 Zotero 摘要都使用原项目的 `task=retrieval, prompt_name=document` 编码，再调用嵌入模型的 similarity 方法，保留其相似度定义。默认模型的已验证版本记录在源码中。算法对照来源：[原排序规则](https://github.com/TideDra/zotero-arxiv-daily/blob/edc68632c9a861559ea376dfd34c3ab0b1e4f34a/src/zotero_arxiv_daily/reranker/base.py)、[原嵌入配置](https://github.com/TideDra/zotero-arxiv-daily/blob/edc68632c9a861559ea376dfd34c3ab0b1e4f34a/config/base.yaml)。
 
-Zotero 原始条目、摘要和嵌入向量仅保留在运行进程内，不写入 data 分支、Actions 模型缓存或网页。DeepSeek 收到的是候选 arXiv 论文的标题和摘要。Pages 发布目录通过明确的文件清单构建，只包含网页、静态资源和公开结果，不包含 `.env`、源码、Zotero 数据或 `_state`。公开推荐结果本身会反映研究兴趣。
+Zotero 原始条目、摘要和嵌入向量仅保留在运行进程内，不写入 personal-data 分支、Actions 模型缓存或网页。DeepSeek 收到的是候选 arXiv 论文的标题和摘要。Pages 发布目录通过明确的文件清单构建，只包含网页、静态资源和公开结果，不包含 `.env`、源码、Zotero 数据或 `_state`。公开推荐结果本身会反映研究兴趣。
 
 本版本保留上游的候选内容检查；该检查仅处理公开的候选论文或生成概括，不处理 Zotero 文献库。
 

@@ -1,6 +1,7 @@
 """Restore/persist the public archive and cost ledger on the data branch.
 
 Uses a temporary Git index so the source checkout and branch stay untouched.
+The separate branch avoids importing the upstream author's data in new forks.
 Network errors while restoring must stop the run: an empty cost ledger is unsafe.
 """
 import argparse
@@ -10,7 +11,8 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-REF = "refs/remotes/origin/data"
+BRANCH = "personal-data"
+REF = f"refs/remotes/origin/{BRANCH}"
 
 
 def git(*args, **kwargs):
@@ -18,12 +20,12 @@ def git(*args, **kwargs):
 
 
 def restore():
-    remote = subprocess.run(["git", "ls-remote", "--exit-code", "origin", "refs/heads/data"], cwd=ROOT, capture_output=True)
+    remote = subprocess.run(["git", "ls-remote", "--exit-code", "origin", f"refs/heads/{BRANCH}"], cwd=ROOT, capture_output=True)
     if remote.returncode == 2:
-        print("First run: no data branch yet.")
+        print("First run: no personal archive branch yet.")
         return
     remote.check_returncode()
-    git("fetch", "--no-tags", "--depth=1", "origin", f"data:{REF}")
+    git("fetch", "--no-tags", "--depth=1", "origin", f"{BRANCH}:{REF}")
     for name in ("data", "_state", "assets/file-list.txt"):
         exists = subprocess.run(["git", "cat-file", "-e", f"{REF}:{name}"], cwd=ROOT, capture_output=True)
         if exists.returncode == 0:
@@ -55,7 +57,7 @@ def save():
             return
         commit = git("commit-tree", tree, *parents, "-m", "Update public papers and summary usage", env=env, text=True).stdout.strip()
         # A normal fast-forward push; a concurrent update fails instead of erasing history.
-        git("push", "origin", f"{commit}:refs/heads/data", env=env)
+        git("push", "origin", f"{commit}:refs/heads/{BRANCH}", env=env)
     print("Saved public archives and summary ledger.")
 
 

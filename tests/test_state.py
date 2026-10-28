@@ -47,7 +47,7 @@ class StateBranchTests(unittest.TestCase):
                 state.restore()
                 # The restored checkout is intentionally shallow; check ancestry
                 # on the bare remote instead of traversing its shallow boundary.
-                self.assertEqual(run("git", "--git-dir", str(remote), "rev-parse", "data^"), first)
+                self.assertEqual(run("git", "--git-dir", str(remote), "rev-parse", f"{state.BRANCH}^"), first)
                 self.assertEqual(json.loads((checkout / "_state/usage.json").read_text())["2026-10-28"]["attempts"], 2)
 
 
