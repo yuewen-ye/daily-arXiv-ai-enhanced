@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="assets/logo2-removebg-preview.png">
     <link rel="shortcut icon" type="image/png" href="assets/logo2-removebg-preview.png">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/recommendations.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -89,19 +90,19 @@
                     <div class="date-selector">
                         <div class="date-display">
                             <span id="currentDate">Loading...</span>
-                            <button id="calendarButton" class="icon-button">
+                            <button id="calendarButton" class="icon-button" aria-label="选择日期">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M19 4H18V2H16V4H8V2H6V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V9H19V20ZM7 11H12V16H7V11Z" fill="currentColor"/>
                                 </svg>
                             </button>
                         </div>
                     </div>
-                    <a href="statistic.html" class="icon-button" title="Statistics">
+                    <a href="statistic.html" class="icon-button" title="统计">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9 17H7V10H9V17ZM13 17H11V7H13V17ZM17 17H15V13H17V17ZM19 19H5V5H19V19.1V19ZM19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z" fill="currentColor"/>
                         </svg>
                     </a>
-                    <a href="settings.html" class="icon-button" title="Settings">
+                    <a href="settings.html" class="icon-button" title="偏好设置">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/>
                         </svg>
@@ -125,7 +126,7 @@
             </div>
             <div class="category-nav">
                 <div class="category-label-container">
-                    <span class="category-nav-label">Category</span>
+                    <span class="category-nav-label">分类</span>
                     <div class="category-scroll">
                         <button class="category-button active" data-category="all">All</button>
                         <!-- 分类按钮将通过 JavaScript 动态生成 -->
@@ -133,16 +134,16 @@
                 </div>
                 <!-- Filter Tag Container -->
                 <div class="filter-label-container">
-                    <span class="filter-nav-label">Filter</span>
+                    <span class="filter-nav-label">偏好</span>
                     <!-- Text Search (magnifier-triggered) -->
                     <div id="textSearchContainer" class="text-search">
-                        <button id="textSearchToggle" class="icon-button" title="Search">
+                        <button id="textSearchToggle" class="icon-button" title="搜索" aria-label="搜索">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10.5 3a7.5 7.5 0 105.07 13.07l3.68 3.68a1 1 0 001.41-1.41l-3.68-3.68A7.5 7.5 0 0010.5 3zm0 2a5.5 5.5 0 110 11 5.5 5.5 0 010-11z" fill="currentColor"/>
                             </svg>
                         </button>
                         <div class="search-input-wrapper" style="display: none;">
-                            <input id="textSearchInput" type="text" placeholder="Type to search..." aria-label="Search" />
+                            <input id="textSearchInput" type="text" placeholder="搜索标题、作者或摘要…" aria-label="搜索论文" />
                             <button id="textSearchClear" class="clear-x" title="Clear" style="display: none;">×</button>
                         </div>
                     </div>
@@ -154,15 +155,23 @@
         </header>
 
         <main>
+            <p id="demoNotice" class="demo-notice" hidden>演示数据：用于预览界面与交互，并非你的 Zotero 推荐或真实模型生成结果。</p>
+            <div class="recommendation-toolbar">
+                <div class="recommendation-switch" role="group" aria-label="推荐方式">
+                    <button type="button" data-recommendation="original" aria-pressed="true">原版推荐</button>
+                    <button type="button" data-recommendation="zotero" aria-pressed="false">Zotero 推荐</button>
+                </div>
+                <p id="recommendationStatus" class="recommendation-status" role="status" aria-live="polite">正在读取论文…</p>
+            </div>
             <div class="date-picker-modal" id="datePickerModal">
                 <div class="date-picker-content">
                     <div class="date-picker-body">
-                        <h3 class="date-picker-title">Select Date</h3>
+                        <h3 class="date-picker-title">选择日期</h3>
                         <div class="flatpickr-container">
                             <input type="text" id="datepicker" placeholder="Select Date" data-input>
                         </div>
                         <div class="date-range-selector">
-                            <span class="toggle-label">Range</span>
+                            <span class="toggle-label">日期范围</span>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="dateRangeMode">
                                 <span class="toggle-slider"></span>
@@ -180,11 +189,11 @@
             </div>
         </main>
 
-        <div class="paper-modal" id="paperModal">
+        <div class="paper-modal" id="paperModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="paper-modal-content">
                 <div class="paper-modal-header">
                     <h2 id="modalTitle">Details</h2>
-                    <button id="closeModal" class="icon-button">
+                    <button id="closeModal" class="icon-button" aria-label="关闭详情">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
                         </svg>
@@ -242,6 +251,7 @@
         </svg>
     </button>
 
-    <script src="js/app.js?v=1.0.1"></script>
+    <script src="js/recommendations.js"></script>
+    <script src="js/app.js?v=2"></script>
 </body>
 </html> 

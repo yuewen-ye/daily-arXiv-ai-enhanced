@@ -6,10 +6,12 @@ import re
 class ArxivSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        categories = os.environ.get("CATEGORIES", "cs.CV")
+        categories = os.environ.get("CATEGORIES") or "cs.CV,cs.LG,cs.AI,cs.CL"
         categories = categories.split(",")
         # 保存目标分类列表，用于后续验证
-        self.target_categories = set(map(str.strip, categories))
+        self.target_categories = {category.strip() for category in categories if category.strip()}
+        if not all(re.fullmatch(r"[A-Za-z][A-Za-z0-9.-]*", category) for category in self.target_categories):
+            raise ValueError("CATEGORIES must contain comma-separated arXiv category codes.")
         self.start_urls = [
             f"https://arxiv.org/list/{cat}/new" for cat in self.target_categories
         ]  # 起始URL（计算机科学领域的最新论文）

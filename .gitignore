@@ -17,3 +17,15 @@ package-lock.json
 yarn.lock
 .DS_Store
 package.json
+
+# Local credentials, unpublished builds and private development fixtures
+.env
+.env.*
+!.env.example
+_site/
+.preview/
+.impeccable/review/
+_state/
+.pytest_cache/
+data/*.jsonl
+data/*_status.json

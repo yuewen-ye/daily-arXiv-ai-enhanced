@@ -35,6 +35,10 @@ class BuildChatOpenAIKwargsTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, r"2 paper\(s\) failed"):
             raise_if_processing_failed(["401 Unauthorized", "401 Unauthorized"])
 
+    def test_deepseek_configuration_disables_default_thinking(self):
+        kwargs = build_chat_openai_kwargs("deepseek-flash", "https://api.deepseek.com/v1", "fake")
+        self.assertEqual({"thinking": {"type": "disabled"}}, kwargs["extra_body"])
+
 
 if __name__ == "__main__":
     unittest.main()

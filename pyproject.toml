@@ -18,3 +18,14 @@ dependencies = [
     "tqdm>=4.67.1",
 ]
 license = "Apache-2.0"
+
+[project.optional-dependencies]
+zotero = ["sentence-transformers>=5.3,<6", "torch>=2.6"]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

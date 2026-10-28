@@ -8,11 +8,12 @@ from queue import Queue
 from threading import Lock
 import dotenv
 import argparse
+import requests
 from tqdm import tqdm
 
 import langchain_core.exceptions
 from langchain_openai import ChatOpenAI
-from langchain.prompts import (
+from langchain_core.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
@@ -145,8 +146,8 @@ def process_all_items(data: List[Dict], model_name: str, language: str, max_work
     llm = ChatOpenAI(
         **build_chat_openai_kwargs(
             model_name=model_name,
-            base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
-            api_key=os.environ.get("OPENAI_API_KEY", ""),
+            base_url=os.environ.get("OPENAI_BASE_URL") or "https://api.deepseek.com",
+            api_key=os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("OPENAI_API_KEY", ""),
         )
     ).with_structured_output(Structure, method="function_calling")
 
@@ -189,7 +190,7 @@ def process_all_items(data: List[Dict], model_name: str, language: str, max_work
 
 def main():
     args = parse_args()
-    model_name = os.environ.get("MODEL_NAME", "gpt-4o-mini")
+    model_name = os.environ.get("DEEPSEEK_MODEL") or os.environ.get("MODEL_NAME") or "deepseek-flash"
     language = os.environ.get("LANGUAGE", 'Chinese')
 
     # 检查并删除目标文件

@@ -74,7 +74,7 @@ function showEmptyTagMessage() {
   const emptyMessage = document.createElement('div');
   emptyMessage.id = 'emptyTagMessage';
   emptyMessage.className = 'empty-tag-message';
-  emptyMessage.textContent = 'No keywords added yet. Add some keywords below.';
+  emptyMessage.textContent = '尚未添加关键词，可以在下方输入。';
   selectedKeywordsContainer.appendChild(emptyMessage);
 }
 
@@ -84,7 +84,7 @@ function showEmptyAuthorMessage() {
   const emptyMessage = document.createElement('div');
   emptyMessage.id = 'emptyAuthorMessage';
   emptyMessage.className = 'empty-tag-message';
-  emptyMessage.textContent = 'No authors added yet. Add some authors below.';
+  emptyMessage.textContent = '尚未添加作者，可以在下方输入。';
   selectedAuthorsContainer.appendChild(emptyMessage);
 }
 
@@ -127,7 +127,12 @@ function addKeywordTag(keyword) {
   // 创建新的关键词标签
   const tagElement = document.createElement('span');
   tagElement.className = 'category-button tag-appear';
-  tagElement.innerHTML = `${keyword} <button class="remove-tag">×</button>`;
+  tagElement.textContent = keyword + " ";
+  const removeTag = document.createElement("button");
+  removeTag.className = "remove-tag";
+  removeTag.textContent = "×";
+  removeTag.setAttribute("aria-label", "移除关键词 " + keyword);
+  tagElement.appendChild(removeTag);
   
   // 添加删除按钮事件
   const removeButton = tagElement.querySelector('.remove-tag');
@@ -180,7 +185,12 @@ function addAuthorTag(author) {
   // 创建新的作者标签
   const tagElement = document.createElement('span');
   tagElement.className = 'category-button tag-appear';
-  tagElement.innerHTML = `${author} <button class="remove-tag">×</button>`;
+  tagElement.textContent = author + " ";
+  const removeTag = document.createElement("button");
+  removeTag.className = "remove-tag";
+  removeTag.textContent = "×";
+  removeTag.setAttribute("aria-label", "移除作者 " + author);
+  tagElement.appendChild(removeTag);
   
   // 添加删除按钮事件
   const removeButton = tagElement.querySelector('.remove-tag');
@@ -315,12 +325,12 @@ function copyKeywords() {
   });
 
   if (keywords.length === 0) {
-    showNotification('No keywords to copy!', 'info');
+    showNotification('暂无关键词可复制', 'info');
     return;
   }
 
   const keywordsString = keywords.join(',');
-  copyToClipboard(keywordsString, 'Keywords copied to clipboard!');
+  copyToClipboard(keywordsString, '关键词已复制');
 }
 
 // 复制作者到剪切板
@@ -333,12 +343,12 @@ function copyAuthors() {
   });
 
   if (authors.length === 0) {
-    showNotification('No authors to copy!', 'info');
+    showNotification('暂无作者可复制', 'info');
     return;
   }
 
   const authorsString = authors.join(',');
-  copyToClipboard(authorsString, 'Authors copied to clipboard!');
+  copyToClipboard(authorsString, '作者已复制');
 }
 
 // 复制到剪切板的通用函数
@@ -398,7 +408,7 @@ function saveSettings() {
   localStorage.setItem('preferredAuthors', JSON.stringify(authors));
   
   // 显示保存成功提示，添加成功图标
-  showNotification('Settings saved successfully!', 'success');
+  showNotification('偏好已保存', 'success');
 }
 
 // 重置设置
@@ -416,7 +426,7 @@ function resetSettings() {
   showEmptyAuthorMessage();
   
   // 显示重置成功提示
-  showNotification('Settings reset to default!', 'info');
+  showNotification('偏好已清空，点击保存使其生效', 'info');
 }
 
 // 显示通知
