@@ -15,11 +15,13 @@ class ArxivSpider(scrapy.Spider):
         self.start_urls = [
             f"https://arxiv.org/list/{cat}/new" for cat in self.target_categories
         ]  # 起始URL（计算机科学领域的最新论文）
+        self.metadata_ids = []
 
     name = "arxiv"  # 爬虫名称
     allowed_domains = ["arxiv.org"]  # 允许爬取的域名
 
     def parse(self, response):
+        items = []
         # 提取每篇论文的信息
         anchors = []
         for li in response.css("div[id=dlpage] ul li"):
@@ -63,17 +65,21 @@ class ArxivSpider(scrapy.Spider):
                 # 检查论文分类是否与目标分类有交集
                 paper_categories = set(categories_in_paper)
                 if paper_categories.intersection(self.target_categories):
-                    yield {
+                    items.append({
                         "id": arxiv_id,
                         "categories": list(paper_categories),  # 添加分类信息用于调试
-                    }
+                    })
                     self.logger.info(f"Found paper {arxiv_id} with categories {paper_categories}")
                 else:
                     self.logger.debug(f"Skipped paper {arxiv_id} with categories {paper_categories} (not in target {self.target_categories})")
             else:
                 # 如果无法获取分类信息，记录警告但仍然返回论文（保持向后兼容）
                 self.logger.warning(f"Could not extract categories for paper {arxiv_id}, including anyway")
-                yield {
+                items.append({
                     "id": arxiv_id,
                     "categories": [],
-                }
+                })
+        # Register the full page before its first item enters the pipeline. This
+        # lets the existing pipeline fetch metadata in bounded groups of 100.
+        self.metadata_ids = list(dict.fromkeys(self.metadata_ids + [item["id"] for item in items]))
+        yield from items
