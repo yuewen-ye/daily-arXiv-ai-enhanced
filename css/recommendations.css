@@ -1,10 +1,10 @@
 /* Extend the existing palette and card layout. */
 :root { --text-tertiary: #64748b; }
 .paper-card-link, .footer-content a { color: #4d55b2; }
-.recommendation-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; margin: 24px 0 20px; }
-.recommendation-switch { display: flex; gap: 4px; padding: 4px; background: var(--background-hover); border-radius: var(--radius-sm); }
-.recommendation-switch button { min-height: 44px; padding: 8px 18px; border-radius: 6px; color: var(--text-secondary); font-weight: 600; }
-.recommendation-switch button[aria-pressed="true"] { background: var(--card-bg-color); color: var(--accent-color); box-shadow: 0 2px 5px rgb(30 41 59 / 9%); }
+.recommendation-toolbar { margin: 16px 0 20px; }
+.recommendation-switch { display: flex; gap: 4px; justify-self: center; }
+.recommendation-switch button { min-height: 44px; padding: 8px 18px; border-radius: var(--radius-sm); color: var(--text-secondary); font-weight: 600; }
+.recommendation-switch button[aria-pressed="true"] { background: #ede9f6; color: #642b91; }
 .recommendation-switch button:hover { color: var(--accent-color); }
 .recommendation-status { flex: 1; min-width: 200px; color: var(--text-secondary); font-size: 14px; line-height: 1.7; }
 .paper-annotations { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
@@ -27,11 +27,74 @@ button:focus-visible, a:focus-visible, input:focus-visible, .paper-card:focus-vi
   .paper-modal-footer { flex-wrap: wrap; }
   .paper-modal-buttons { flex-wrap: wrap; }
   .paper-sections { grid-template-columns: minmax(0, 1fr); }
-  .recommendation-toolbar { gap: 10px; margin: 16px 0; }
-  .recommendation-switch { width: 100%; }
-  .recommendation-switch button { flex: 1; padding-inline: 12px; }
   .recommendation-status { width: 100%; font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .recommendation-switch *, .paper-card { animation: none !important; transition: none !important; }
+}
+
+/* Keep only the reading navigation fixed; secondary filters belong to the list. */
+.reading-header .header-content {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 24px;
+  padding-block: 12px;
+  position: relative;
+}
+.reading-header .header-center { min-width: 0; margin: 0; }
+.reading-header .header-controls { gap: 12px; margin: 0; position: relative; }
+.reading-header .icon-button { width: 44px; height: 44px; flex: 0 0 44px; }
+.reading-header .date-display { white-space: nowrap; }
+.reading-header .text-search { margin: 0; }
+.reading-header .search-input-wrapper {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: min(400px, calc(100vw - 48px));
+  padding: 6px 12px;
+  background: var(--card-bg-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+.reading-header #textSearchInput { width: 100%; min-width: 0; min-height: 36px; }
+.reading-header .clear-x { width: 44px; height: 44px; flex: 0 0 44px; }
+#categoryFilters {
+  position: static;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding-top: 8px;
+  gap: 4px;
+}
+#categoryFilters[hidden] { display: none; }
+#categoryFilters .category-label-container,
+#categoryFilters .filter-label-container { padding: 4px 0; }
+#categoryFilters .category-nav-label,
+#categoryFilters .filter-nav-label { min-width: 48px; }
+#categoryFilters .category-scroll,
+#categoryFilters .filter-scroll { min-width: 0; padding: 4px; margin: 0; }
+#categoryFilters .category-button { min-height: 44px; }
+@media (max-width: 1100px) {
+  .reading-header .header-content {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 12px;
+  }
+  .reading-header .recommendation-switch { justify-self: end; }
+  .reading-header .header-controls { grid-column: 1 / -1; width: 100%; }
+  .reading-header .date-selector { margin-right: auto; }
+}
+@media (max-width: 600px) {
+  .reading-header .header-content { padding: 8px 16px; gap: 4px 6px; }
+  .reading-header .site-title { font-size: 14px; white-space: nowrap; }
+  .reading-header .site-title-extra { display: none; }
+  .reading-header .site-logo { gap: 6px; }
+  .reading-header .logo-image { height: 26px; }
+  .reading-header .recommendation-switch { gap: 0; }
+  .reading-header .recommendation-switch button { font-size: 13px; padding: 8px; }
+  .reading-header .header-controls { gap: 4px; flex-wrap: nowrap; }
+  .reading-header .date-selector { min-width: 0; padding: 0; }
+  .reading-header .date-display { font-size: 12px; white-space: normal; }
+  .reading-header #currentDate { overflow-wrap: anywhere; }
+  .reading-header .search-input-wrapper { width: 100%; top: calc(100% + 8px); }
 }

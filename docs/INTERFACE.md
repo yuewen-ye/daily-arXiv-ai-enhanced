@@ -6,29 +6,29 @@
 
 [基础样式](../css/styles.css) 保留 Inter 与系统字体回退、浅色背景（`#fafbff`）、白色卡片、蓝紫渐变（`#667eea` → `#764ba2`）、正文（`#1e293b`）及次级正文（`#475569`）。继续使用原有 8/12px 圆角、轻阴影、卡片标题 16px、摘要 14px，以及桌面最大宽度 1440px 的容器。
 
-标志、页头、分类和偏好标签、论文卡片、日期选择器、详情弹窗及设置表单沿用原结构。[首页](../index.html) 与[设置页](../settings.html) 均在基础样式之后加载 [recommendations.css](../css/recommendations.css)，由该文件集中提供本次扩展与修正。设置页另保留原有 `css/settings.css`。
+标志、论文卡片、日期选择器、详情弹窗及设置表单沿用原结构。主导航固定在顶部，分类和偏好位于主内容区，随列表滚动。[首页](../index.html) 与[设置页](../settings.html) 均在基础样式之后加载 [recommendations.css](../css/recommendations.css)，由该文件集中提供本次扩展与修正。设置页另保留原有 `css/settings.css`。
 
 ## 新增组件与交互
 
 | 来源或选择器 | 约定 |
 | --- | --- |
-| `.recommendation-toolbar`、`.recommendation-switch` | 列表上方显示“原版推荐 / Zotero 推荐”。使用原生按钮组成 `role="group"`，以 `aria-pressed` 表示选中；选中态为白底、紫色文字、轻阴影，按钮最小高度 44px。 |
-| `[data-recommendation]` | 切换在当前归档内重新排序，保存到本地偏好；排序本身不调用 Zotero 或模型 API。 |
+| `.recommendation-toolbar`、`.recommendation-switch` | 主导航显示“Zotero 推荐 / 类别推荐”，使用带 `aria-label` 的 `nav` 和原生按钮，以 `aria-pressed` 表示选中；选中态为浅紫底、深紫文字，按钮最小高度 44px。列表上方保留状态说明。 |
+| `[data-recommendation]` | 切换当前归档的浏览模式，保存到本地偏好。类别筛选只影响类别推荐；Zotero 使用所有类别。排序本身不调用 Zotero 或模型 API。 |
 | `#recommendationStatus` | 使用 `role="status"` 与 `aria-live="polite"`，说明排序依据、当前论文数、中文概括数，以及生成失败后的原摘要回退。无 Zotero 分数时明确提示按原顺序显示。 |
 | `.paper-annotations`、`.zotero-score` | 展示可用的 Zotero 相关性分数；分数保留两位小数，提示其不是概率。分数缺失时不补造数字。 |
 | `.summary-source`、`[data-ai="true"]` | 区分“DeepSeek 中文概括”“原始摘要”；演示模式使用“演示中文概括”。生成失败、达到额度、未进入生成范围时保留原摘要，并通过来源提示解释状态。文字标记与颜色同时表达来源。 |
 | `.demo-notice` | 演示模式显示黄色提示，明确数据用于交互预览，并非用户的 Zotero 推荐或真实模型结果。 |
 
-排序实现见 [js/recommendations.js](../js/recommendations.js)：原版推荐将关键词或作者命中的论文置前，其余仍可浏览；Zotero 推荐先显示有分数的论文，再按分数降序，同分保持归档顺序。搜索词存在时，两种模式均先将文本命中置前，再应用所选排序；搜索并非隐藏所有未命中的论文。
+排序实现见 [js/recommendations.js](../js/recommendations.js)：类别推荐将关键词或作者命中的论文置前，其余仍可浏览；Zotero 推荐先显示有分数的论文，再按分数降序，同分保持归档顺序。搜索词存在时，两种模式均先将文本命中置前，再应用所选排序；搜索并非隐藏所有未命中的论文。
 
-日期与日期范围、分类选择、搜索入口和详情继续可用。分类决定当前论文集合；推荐切换只改变该集合的顺序。设置页明确说明关键词、作者影响原版推荐，Zotero 推荐依据文献库相似度。控制状态、来源提示和列表渲染见 [js/app.js](../js/app.js) 的 `initRecommendationControls`、`updateRecommendationStatus`、`paperAnnotations`、`renderPapers`。
+日期与日期范围、搜索入口和详情在两种模式共用。分类与偏好行只在类别推荐中显示；类别按论文首个 arXiv 类别归组，Zotero 不受类别选择限制。切回类别推荐时恢复先前分类；换日期后若分类不存在则回到全部。设置页明确说明关键词、作者影响类别推荐，Zotero 推荐依据文献库相似度。控制状态、来源提示和列表渲染见 [js/app.js](../js/app.js) 的 `initRecommendationControls`、`updateRecommendationStatus`、`paperAnnotations`、`renderPapers`。
 
 ## 本次可访问性与手机修正
 
 - 扩展样式将日期、页脚等三级文字所用的 `--text-tertiary` 调为 `#64748b`；论文链接及页脚链接调为 `#4d55b2`，保留既有蓝紫色系。
 - 按钮、链接、输入框和可聚焦论文卡片使用 3px 紫色 `:focus-visible` 外框。论文卡片支持键盘打开，详情关闭后回到原焦点；对应实现位于 `js/app.js`。
 - 基础样式原有 768px 响应式规则继续生效；新增 600px 规则将页头改为单列，标题允许换行，控制区允许折行，修复 360/390px 宽度下的页头溢出。
-- 小屏推荐按钮等宽铺满一行，状态说明另起一行；分类与偏好滚动区域允许收缩；论文列表及详情分节使用 `minmax(0, 1fr)`，详情页脚按钮可折行。长标题和摘要可断行。
+- 首页小屏主导航分成两行：标志与推荐方式在第一行，日期、搜索、统计与设置在第二行；搜索输入框展开在导航下方，支持 Escape 关闭。状态说明位于内容区；分类与偏好滚动区域允许收缩；论文列表及详情分节使用 `minmax(0, 1fr)`，详情页脚按钮可折行。长标题和摘要可断行。
 - 系统选择减少动态效果时，推荐切换子元素与论文卡片停用动画和过渡。该规则仅覆盖上述组件。
 
 ## 验收材料与边界
@@ -42,3 +42,12 @@
 - 手机日期选择：`.impeccable/review/mobile-date.png`
 
 截图用于确认布局与可见状态。演示数据只证明两种排序、分类、搜索、日期和详情等界面可展示与交互，不能证明真实 Zotero 文献库连接、个性化分数质量、DeepSeek 实际生成或每日更新任务已经成功执行。正式数据模式由 [js/data-config.js](../js/data-config.js) 配置；真实服务的配置与验证应按 [setup.html](../setup.html) 执行，并保留独立运行证据。
+
+## 导航层级调整（2026-10-29）
+
+- 固定区域仅包含主导航，底色与页面一致，移除原有模糊和底部硬分隔。
+- GitHub 星标/分叉统计框从首页、设置页、统计页移除，同时清理统计请求。
+- “原版推荐”统一改名为“类别推荐”；代码内的 `original` 值保留，以兼容已有浏览器偏好。
+- 搜索从偏好行迁入主导航；没有关键词或作者偏好时隐藏空的偏好行。
+- 本次是可逆的导航与浏览交互调整，不新增 ADR。
+- 界面分类状态使用 `viewCategory` 地址参数，避免与已有 JSON 导出参数 `category` 混用；刷新仍保留阅读页面与先前分类。

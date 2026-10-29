@@ -2,9 +2,12 @@
 (function (root) {
   'use strict';
   const hasScore = paper => Number.isFinite(paper.zotero?.score);
-  function select(papers, { mode = 'original', keywords = [], authors = [], query = '' } = {}) {
+  function select(papers, { mode = 'original', keywords = [], authors = [], query = '', category = 'all' } = {}) {
     const needle = query.trim().toLowerCase();
-    return papers.map((paper, index) => {
+    const candidates = mode === 'zotero' || category === 'all'
+      ? papers
+      : papers.filter(paper => paper.category?.[0] === category);
+    return candidates.map((paper, index) => {
       const text = `${paper.title || ''} ${paper.summary || ''} ${paper.details || ''}`.toLowerCase();
       const matchedKeywords = keywords.filter(word => text.includes(word.toLowerCase()));
       const matchedAuthors = authors.filter(name => (paper.authors || '').toLowerCase().includes(name.toLowerCase()));

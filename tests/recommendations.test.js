@@ -34,3 +34,18 @@ test('absent and zero scores differ; sorting does not mutate the source', () => 
   select(records, { mode: 'zotero' });
   assert.equal(records[0].isMatched, undefined);
 });
+
+test('a selected category scopes category browsing but never restricts Zotero', () => {
+  const papers = [
+    { id: 'vision', category: ['cs.CV', 'cs.LG'], zotero: { score: 3 } },
+    { id: 'language', category: ['cs.CL'], zotero: { score: 8 } },
+    { id: 'learning', category: ['cs.LG'], zotero: { score: 5 } },
+  ];
+  const selection = { category: 'cs.CV' };
+  assert.deepEqual(select(papers, selection).map(p => p.id), ['vision']);
+  assert.deepEqual(select(papers, { ...selection, mode: 'zotero' }).map(p => p.id), ['language', 'learning', 'vision']);
+  assert.deepEqual(select(papers, selection).map(p => p.id), ['vision']);
+  assert.deepEqual(select(papers, { category: 'cs.LG' }).map(p => p.id), ['learning']);
+  assert.equal(select(papers, { category: 'missing' }).length, 0);
+  assert.equal(select(papers, { mode: 'zotero', category: 'missing' }).length, papers.length);
+});

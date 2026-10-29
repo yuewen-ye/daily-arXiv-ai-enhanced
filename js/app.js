@@ -2,7 +2,7 @@ let currentDate = '';
 let availableDates = [];
 let recommendationMode = localStorage.getItem('recommendationMode') === 'zotero' ? 'zotero' : 'original';
 let currentView = 'grid'; // 'grid' 或 'list'
-let currentCategory = 'all';
+let currentCategory = new URLSearchParams(window.location.search).get('viewCategory') || 'all';
 let urlCategoryParam = null; // 从URL参数中获取的category
 let urlJsonParam = null; // 从URL参数中获取的json（API模式）
 let urlAuthorParam = null; // 从URL参数中获取的author
@@ -69,9 +69,9 @@ function renderFilterTags() {
   const filterTagsElement = document.getElementById('filterTags');
   const filterContainer = document.querySelector('.filter-label-container');
   
-  // 如果没有作者和关键词，仅隐藏标签区域，保留容器（以显示搜索按钮）
+  // 搜索位于主导航；没有偏好标签时隐藏整行。
   if ((!userAuthors || userAuthors.length === 0) && (!userKeywords || userKeywords.length === 0)) {
-    filterContainer.style.display = 'flex';
+    filterContainer.style.display = 'none';
     if (filterTagsElement) {
       filterTagsElement.style.display = 'none';
       filterTagsElement.innerHTML = '';
@@ -373,8 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
   initRecommendationControls();
 
-  fetchGitHubStats();
-
   // 加载用户关键词
   loadUserKeywords();
 
@@ -397,22 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-async function fetchGitHubStats() {
-  try {
-    const response = await fetch('https://api.github.com/repos/dw-dengwei/daily-arXiv-ai-enhanced');
-    const data = await response.json();
-    const starCount = data.stargazers_count;
-    const forkCount = data.forks_count;
-    
-    document.getElementById('starCount').textContent = starCount;
-    document.getElementById('forkCount').textContent = forkCount;
-  } catch (error) {
-    console.error('获取GitHub统计数据失败:', error);
-    document.getElementById('starCount').textContent = '?';
-    document.getElementById('forkCount').textContent = '?';
-  }
-}
 
 function initEventListeners() {
   // 日期选择器相关的事件监听
@@ -587,6 +569,7 @@ function initEventListeners() {
     searchToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       searchWrapper.style.display = 'flex';
+      searchToggle.setAttribute('aria-expanded', 'true');
       searchInput.focus();
     });
 
@@ -625,6 +608,7 @@ function initEventListeners() {
         previousActiveAuthors = null;
         // 文本为空时自动隐藏输入框
         searchWrapper.style.display = 'none';
+        searchToggle.setAttribute('aria-expanded', 'false');
       }
 
       // 控制清除按钮显示
@@ -634,6 +618,13 @@ function initEventListeners() {
     };
 
     searchInput.addEventListener('input', handleInput);
+    searchInput.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        searchWrapper.style.display = 'none';
+        searchToggle.setAttribute('aria-expanded', 'false');
+        searchToggle.focus();
+      }
+    });
 
     // 清除按钮：清空文本，恢复其他过滤
     searchClear.addEventListener('click', (e) => {
@@ -657,6 +648,8 @@ function initEventListeners() {
       renderPapers();
       // 清空后隐藏输入框
       searchWrapper.style.display = 'none';
+      searchToggle.setAttribute('aria-expanded', 'false');
+      searchToggle.focus();
     });
 
     // 失焦时：若文本为空则隐藏输入框（保持有文本时不隐藏）
@@ -664,6 +657,7 @@ function initEventListeners() {
       const value = searchInput.value.trim();
       if (value.length === 0) {
         searchWrapper.style.display = 'none';
+        searchToggle.setAttribute('aria-expanded', 'false');
       }
     });
 
@@ -1016,9 +1010,9 @@ function filterByCategory(category) {
   if (!isJsonMode()) {
     const url = new URL(window.location);
     if (category === 'all') {
-      url.searchParams.delete('category');
+      url.searchParams.delete('viewCategory');
     } else {
-      url.searchParams.set('category', category);
+      url.searchParams.set('viewCategory', category);
     }
     // 使用replaceState更新URL，不刷新页面
     window.history.replaceState({}, '', url);
@@ -1069,11 +1063,13 @@ function paperAnnotations(paper) {
 
 function initRecommendationControls() {
   document.getElementById('demoNotice').hidden = !DATA_CONFIG.demo;
+  document.getElementById('categoryFilters').hidden = recommendationMode === 'zotero';
   document.querySelectorAll('[data-recommendation]').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.recommendation === recommendationMode));
     button.addEventListener('click', () => {
       recommendationMode = button.dataset.recommendation;
       localStorage.setItem('recommendationMode', recommendationMode);
+      document.getElementById('categoryFilters').hidden = recommendationMode === 'zotero';
       document.querySelectorAll('[data-recommendation]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
       renderPapers();
     });
@@ -1085,7 +1081,7 @@ function updateRecommendationStatus(papers) {
   const scored = papers.filter(Recommendations.hasScore).length;
   let description = recommendationMode === 'zotero'
     ? (scored ? '按与你 Zotero 文献库的相关性排序' : '这批归档还没有 Zotero 分数，暂按原顺序显示')
-    : '关键词、作者命中的论文置前，其余论文仍可浏览';
+    : '按类别浏览，关键词、作者命中的论文置前';
   const failures = papers.filter(paper => paper.summaryStatus === 'failed').length;
   document.getElementById('recommendationStatus').textContent = `${description} · ${papers.length} 篇，其中 ${count} 篇有中文概括${failures ? `，${failures} 篇概括生成失败，已保留原摘要` : ''}`;
 }
@@ -1148,20 +1144,11 @@ function renderPapers() {
   container.innerHTML = '';
   container.className = `paper-container ${currentView === 'list' ? 'list-view' : ''}`;
   
-  let papers = [];
-  if (currentCategory === 'all') {
-    const { sortedCategories } = getAllCategories(paperData);
-    sortedCategories.forEach(category => {
-      if (paperData[category]) {
-        papers = papers.concat(paperData[category]);
-      }
-    });
-  } else if (paperData[currentCategory]) {
-    papers = paperData[currentCategory];
-  }
-  
+  const { sortedCategories } = getAllCategories(paperData);
+  const papers = sortedCategories.flatMap(category => paperData[category] || []);
   const filteredPapers = Recommendations.select(papers, {
-    mode: recommendationMode, keywords: activeKeywords, authors: activeAuthors, query: textSearchQuery
+    mode: recommendationMode, category: currentCategory,
+    keywords: activeKeywords, authors: activeAuthors, query: textSearchQuery
   });
   updateRecommendationStatus(filteredPapers);
 

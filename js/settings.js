@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   initSettings();
   initEventListeners();
-  fetchGitHubStats();
 });
 
 // 初始化设置，从localStorage加载已保存的设置
@@ -489,20 +488,3 @@ function showNotification(message, type = 'success') {
     }, 300);
   }, 3000);
 }
-
-// 获取GitHub统计数据
-async function fetchGitHubStats() {
-  try {
-    const response = await fetch('https://api.github.com/repos/dw-dengwei/daily-arXiv-ai-enhanced');
-    const data = await response.json();
-    const starCount = data.stargazers_count;
-    const forkCount = data.forks_count;
-    
-    document.getElementById('starCount').textContent = starCount;
-    document.getElementById('forkCount').textContent = forkCount;
-  } catch (error) {
-    console.error('获取GitHub统计数据失败:', error);
-    document.getElementById('starCount').textContent = '?';
-    document.getElementById('forkCount').textContent = '?';
-  }
-} 

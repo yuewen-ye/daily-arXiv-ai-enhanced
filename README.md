@@ -1,4 +1,4 @@
-# Daily arXiv · 关键词与 Zotero 双推荐
+# Daily arXiv · 类别与 Zotero 双推荐
 
 基于 [daily-arXiv-ai-enhanced](https://github.com/dw-dengwei/daily-arXiv-ai-enhanced) 的个人阅读站点，保留原有日期、分类、作者和关键词浏览，增加基于 Zotero 文献库的语义推荐。算法规则参考 [zotero-arxiv-daily](https://github.com/TideDra/zotero-arxiv-daily)。上游原说明保存在 [README.upstream.md](README.upstream.md)。
 
@@ -10,7 +10,7 @@
 4. 只为 Zotero 前 50 篇尝试生成 DeepSeek 中文概括；其他论文保留原始摘要。成功结果缓存复用。
 5. 保存日期归档和生成额度记录，并发布 GitHub Pages。
 
-网页的“原版推荐”依旧把关键词或作者命中项置前，并保留其他论文；“Zotero 推荐”按语义分数排序。两者可以独立切换，类别和文本搜索在两个视图都可使用。关键词、作者偏好保存在浏览器，影响原版推荐，不影响后台的 Top 50 摘要选择。
+网页的“类别推荐”依旧把关键词或作者命中项置前，并保留其他论文；“Zotero 推荐”按语义分数排序。两种入口常驻顶部导航。cs 分类与偏好仅在“类别推荐”下显示；切换到 Zotero 时浏览当前日期内的全部类别，切回后恢复先前分类。日期与文本搜索在两个视图共用，搜索将匹配项置前并保留其余论文。关键词、作者偏好保存在浏览器，影响类别推荐，不影响后台的 Top 50 摘要选择。
 
 ## 线上部署
 

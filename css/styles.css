@@ -149,10 +149,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--background-color);
 }
 
 .header-content {
@@ -165,19 +162,10 @@ header {
   width: 100%;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
 .header-center {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .site-logo {
@@ -210,70 +198,6 @@ header {
 
 .header-content h1 {
   font-size: 20px;
-  font-weight: 600;
-}
-
-.github-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 24px;
-  background: var(--gradient-primary);
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  transition: var(--transition);
-  text-decoration: none !important;
-  box-shadow: var(--shadow-sm);
-}
-
-.github-button:hover {
-  background: var(--gradient-primary);
-  text-decoration: none !important;
-  transform: translateY(-1px);
-  color: white;
-  box-shadow: var(--shadow-md);
-}
-
-.github-button svg {
-  fill: white;
-}
-
-.github-text {
-  font-weight: 500;
-}
-
-.github-stats {
-  display: flex;
-  gap: 6px;
-}
-
-.star-badge,
-.fork-badge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background-color: rgba(255, 255, 255, 0.25);
-  border-radius: 12px;
-  padding: 4px 8px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.star-badge svg {
-  fill: white;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
-}
-
-.fork-badge svg {
-  fill: white;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
-}
-
-.star-count,
-.fork-count {
-  color: white;
   font-weight: 600;
 }
 
@@ -1231,10 +1155,6 @@ input:checked + .toggle-slider:before {
     position: static;
     transform: none;
     margin-bottom: 8px;
-  }
-  
-  .header-left {
-    display: none;
   }
   
   .header-controls {
