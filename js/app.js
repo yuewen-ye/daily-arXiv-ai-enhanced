@@ -23,6 +23,7 @@ let paperLoadVersion = 0;
 let papersLoading = false;
 let selectedDateBounds = [];
 let readingView = 'unread';
+let readingFeedbackTimer;
 const readingStore = ReadingQueue.create(() => localStorage, DATA_CONFIG.demo ? 'demo' : 'personal');
 
 // 加载用户的关键词设置
@@ -1106,21 +1107,23 @@ function renderArchiveFreshness() {
     : !DATA_CONFIG.latestArchive
       ? '暂无归档更新记录'
       : time
-        ? `最近更新：${time}（北京时间） · 最新归档批次：${DATA_CONFIG.latestArchive}（UTC）`
-        : `最近更新：历史归档未记录完成时间 · 最新归档批次：${DATA_CONFIG.latestArchive}（UTC）`;
-  element.title = '最近更新是最新归档数据处理完成的时间，页面重新发布不会刷新它。归档批次按 UTC 日期命名，并非论文发表日期。';
+        ? `更新于 ${time}（北京时间）`
+        : '历史归档 · 更新时间未记录';
+  element.title = `最新归档批次：${DATA_CONFIG.latestArchive || '无'}（UTC）。最近更新是最新归档数据处理完成的时间，页面重新发布不会刷新它。归档批次并非论文发表日期。`;
 }
 
 function updateRecommendationStatus(papers, displayed) {
   const visible = displayed || (textSearchQuery.trim() && onlySearchMatches ? papers.filter(paper => paper.isMatched) : papers);
   const count = visible.filter(paper => paper.hasAI).length;
   const scored = papers.filter(Recommendations.hasScore).length;
-  let description = recommendationMode === 'zotero'
-    ? (scored ? '按与你 Zotero 文献库的相关性排序' : '这批归档还没有 Zotero 分数，暂按原顺序显示')
-    : '按类别浏览，关键词、作者命中的论文置前';
-  if (textSearchQuery.trim()) description = `搜索“${textSearchQuery}”：匹配 ${papers.filter(paper => paper.isMatched).length} / ${papers.length} 篇 · ${onlySearchMatches ? '仅显示匹配论文' : '匹配论文置前，保留其余论文'}；清空搜索后恢复推荐顺序`;
+  let description = readingView === 'read' && !papers.length
+    ? '已读论文会保存在这里，可随时恢复未读'
+    : recommendationMode === 'zotero'
+      ? (scored ? '按 Zotero 文献库相关性排序' : '暂无 Zotero 分数，按原顺序显示')
+      : '关键词与作者匹配优先';
+  if (textSearchQuery.trim()) description = `匹配 ${papers.filter(paper => paper.isMatched).length} / ${papers.length} 篇 · ${onlySearchMatches ? '仅显示匹配论文' : '匹配论文优先'}`;
   const failures = visible.filter(paper => paper.summaryStatus === 'failed').length;
-  document.getElementById('recommendationStatus').textContent = `${description} · 当前显示 ${visible.length} 篇，其中 ${count} 篇有中文概括${failures ? `，${failures} 篇概括生成失败，已保留原摘要` : ''}`;
+  document.getElementById('recommendationStatus').textContent = `${description}${visible.length ? ` · ${count} 篇有中文概括` : ''}${failures ? ` · ${failures} 篇概括生成失败，保留原摘要` : ''}`;
 }
 
 // 帮助函数：格式化作者列表（用于论文卡片显示）
@@ -1177,6 +1180,7 @@ function formatAuthorsForCard(authorsString, authorTerms = []) {
 }
 
 function showReadingFeedback(message, undo) {
+  clearTimeout(readingFeedbackTimer);
   const feedback = document.getElementById('readingFeedback');
   feedback.replaceChildren();
   feedback.hidden = !message;
@@ -1191,6 +1195,9 @@ function showReadingFeedback(message, undo) {
     button.addEventListener('click', undo);
     feedback.appendChild(button);
   }
+  if (message === '已撤销。') readingFeedbackTimer = setTimeout(() => {
+    feedback.hidden = true;
+  }, 4000);
 }
 
 function changeReadState(paper, read, index) {
@@ -1227,8 +1234,10 @@ function renderPapers() {
   const searchPapers = searching && onlySearchMatches ? selectedPapers.filter(paper => paper.isMatched) : selectedPapers;
   const filteredPapers = readingView === 'read' ? searchPapers : readingStore.select(searchPapers, readingView);
   document.getElementById('readingCount').textContent = readingView === 'read'
-    ? `已读 ${readingStore.list().length} 篇（跨日期记录）`
-    : `当前范围 ${selectedPapers.length} 篇 · 显示 ${filteredPapers.length} 篇${readingView === 'unread' ? '未读' : ''}`;
+    ? `已读 ${readingStore.list().length} 篇 · 跨日期记录`
+    : `显示 ${filteredPapers.length} / ${selectedPapers.length} 篇`;
+  document.getElementById('exportReadRecords').hidden = readingView !== 'read';
+  document.getElementById('readingHint').hidden = readingView !== 'read';
   updateRecommendationStatus(selectedPapers, filteredPapers);
   document.getElementById('searchResultsControls').hidden = !searching;
   document.getElementById('onlySearchMatches').checked = onlySearchMatches;

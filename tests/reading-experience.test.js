@@ -146,13 +146,21 @@ test('real renderer reports search hits, supports zero-match filtering and resto
   assert.match(a.document.getElementById('recommendationStatus').textContent,/匹配 1 \/ 2/);
   a.run(`onlySearchMatches=true; renderPapers();`);
   assert.equal(a.run('currentFilteredPapers.length'),1);
-  assert.match(a.document.getElementById('recommendationStatus').textContent,/当前显示 1 篇/);
+  assert.match(a.document.getElementById('readingCount').textContent,/显示 1 \/ 2 篇/);
   a.run(`textSearchQuery='missing'; renderPapers();`);
   assert.equal(a.run('currentFilteredPapers.length'),0);
   assert.match(a.document.getElementById('paperContainer').innerHTML,/没有匹配/);
   a.run(`textSearchQuery=''; renderPapers();`);
   assert.equal(a.run('currentFilteredPapers[0].id'),'b');
   assert.equal(a.document.getElementById('searchResultsControls').hidden,true);
+  a.run(`recommendationMode='zotero'; readingView='read'; renderPapers();`);
+  assert.match(a.document.getElementById('recommendationStatus').textContent,/已读论文会保存在这里/);
+  assert.doesNotMatch(a.document.getElementById('recommendationStatus').textContent,/暂无 Zotero 分数/);
+  assert.equal(a.document.getElementById('exportReadRecords').hidden,false);
+  assert.equal(a.document.getElementById('readingHint').hidden,false);
+  a.run(`readingView='unread'; renderPapers();`);
+  assert.equal(a.document.getElementById('exportReadRecords').hidden,true);
+  assert.equal(a.document.getElementById('readingHint').hidden,true);
 });
 
 test('update time is explicitly Beijing time across midnight, independent of the archive batch', () => {
@@ -167,13 +175,13 @@ test('update time is explicitly Beijing time across midnight, independent of the
   a.context.DATA_CONFIG.archiveUpdatedAt='2026-10-31T20:42:56Z';
   a.run('renderArchiveFreshness()');
   const text=a.document.getElementById('archiveFreshness').textContent;
-  assert.match(text,/最近更新：2026年11月1日 04:42（北京时间）/);
-  assert.match(text,/最新归档批次：2026-10-31（UTC）/);
+  assert.match(text,/更新于 2026年11月1日 04:42（北京时间）/);
+  assert.match(a.document.getElementById('archiveFreshness').title,/最新归档批次：2026-10-31（UTC）/);
   a.run(`currentDate='2026-10-28'; renderArchiveFreshness()`);
   assert.equal(a.document.getElementById('archiveFreshness').textContent,text);
   a.context.DATA_CONFIG.archiveUpdatedAt=null;
   a.run('renderArchiveFreshness()');
-  assert.match(a.document.getElementById('archiveFreshness').textContent,/未记录完成时间/);
+  assert.match(a.document.getElementById('archiveFreshness').textContent,/更新时间未记录/);
   a.context.DATA_CONFIG.demo=true;
   a.run('renderArchiveFreshness()');
   assert.equal(a.document.getElementById('archiveFreshness').textContent,'演示数据 · 非真实更新记录');

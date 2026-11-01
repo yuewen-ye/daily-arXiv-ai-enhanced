@@ -59,7 +59,7 @@
                 <div class="header-center">
                     <a href="index.html" class="site-logo">
                         <img src="assets/logo2-removebg-preview.png" alt="Daily arXiv AI Enhanced Logo" class="logo-image">
-                        <span class="site-title">Daily arXiv<span class="site-title-extra"> AI Enhanced</span></span>
+                        <span class="site-title">Daily arXiv</span>
                     </a>
                 </div>
                 
@@ -69,15 +69,13 @@
                 </nav>
                 <div class="header-controls">
                     <div class="date-selector">
-                        <div class="date-display">
-                            <span class="archive-date-label">归档批次（UTC）</span>
-                            <span id="currentDate">正在读取…</span>
-                            <button id="calendarButton" class="icon-button" aria-label="选择日期">
+                            <button id="calendarButton" class="date-display" aria-label="选择归档日期（UTC）" title="选择归档日期（UTC），并非论文发表日期">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M19 4H18V2H16V4H8V2H6V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V9H19V20ZM7 11H12V16H7V11Z" fill="currentColor"/>
                                 </svg>
+                                <span id="currentDate">正在读取…</span>
+                                <span class="archive-date-label">UTC</span>
                             </button>
-                        </div>
                     </div>
                     <div id="textSearchContainer" class="text-search">
                         <button id="textSearchToggle" class="icon-button" title="搜索" aria-label="搜索" aria-expanded="false" aria-controls="paperSearchPanel">
@@ -106,16 +104,6 @@
                             <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.59L17 17L22 12L17 7ZM4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/>
                         </svg>
                     </button>
-                    <!-- <div class="view-controls">
-                        <button id="toggleView" class="button">
-                            <span class="view-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4 11H9V5H4V11ZM4 18H9V12H4V18ZM10 18H15V12H10V18ZM16 18H21V12H16V18ZM10 11H15V5H10V11ZM16 5V11H21V5H16Z" fill="currentColor"/>
-                                </svg>
-                            </span>
-                            <span>View</span>
-                        </button>
-                    </div> -->
                 </div>
             </div>
         </header>
@@ -138,19 +126,19 @@
                 </div>
             </div>
 
-            <p id="archiveFreshness" class="archive-freshness" role="status">正在读取更新记录…</p>
             <p id="demoNotice" class="demo-notice" hidden>演示数据：用于预览界面与交互，并非你的 Zotero 推荐或真实模型生成结果。</p>
             <div class="reading-tools" aria-label="阅读进度">
-                <label for="readingView">阅读列表</label>
+                <label for="readingView" class="visually-hidden">阅读列表</label>
                 <select id="readingView">
                     <option value="unread">未读前 50</option>
                     <option value="all">全部论文</option>
                     <option value="read">已读记录</option>
                 </select>
                 <span id="readingCount"></span>
-                <button id="exportReadRecords" type="button" class="recovery-button">导出已读记录</button>
-                <span class="reading-hint">仅保存在当前浏览器，标记已读不调用 AI</span>
+                <button id="exportReadRecords" type="button" class="recovery-button" hidden>导出记录</button>
+                <p id="archiveFreshness" class="archive-freshness" role="status">正在读取更新记录…</p>
             </div>
+            <p id="readingHint" class="reading-hint" hidden>已读记录仅保存在当前浏览器，可导出备份。</p>
             <div id="readingFeedback" class="reading-feedback" role="status" aria-live="polite" hidden></div>
             <div class="recommendation-toolbar">
                 <p id="recommendationStatus" class="recommendation-status" role="status" aria-live="polite">正在读取论文…</p>
