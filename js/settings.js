@@ -105,6 +105,8 @@ function hideEmptyAuthorMessage() {
 
 // 添加关键词标签
 function addKeywordTag(keyword) {
+  keyword = String(keyword).trim();
+  if (!keyword) return;
   const selectedKeywordsContainer = document.getElementById('selectedKeywords');
   
   // 移除空标签消息
@@ -113,7 +115,7 @@ function addKeywordTag(keyword) {
   // 检查关键词是否已存在
   const existingTags = selectedKeywordsContainer.querySelectorAll('.category-button');
   for (let i = 0; i < existingTags.length; i++) {
-    if (existingTags[i].textContent.trim().startsWith(keyword)) {
+    if (existingTags[i].dataset.value.toLowerCase() === keyword.toLowerCase()) {
       // 已存在该关键词，添加闪烁动画提示用户
       existingTags[i].classList.add('tag-highlight');
       setTimeout(() => {
@@ -126,6 +128,7 @@ function addKeywordTag(keyword) {
   // 创建新的关键词标签
   const tagElement = document.createElement('span');
   tagElement.className = 'category-button tag-appear';
+  tagElement.dataset.value = keyword;
   tagElement.textContent = keyword + " ";
   const removeTag = document.createElement("button");
   removeTag.className = "remove-tag";
@@ -163,6 +166,8 @@ function addKeywordTag(keyword) {
 
 // 添加作者标签
 function addAuthorTag(author) {
+  author = String(author).trim();
+  if (!author) return;
   const selectedAuthorsContainer = document.getElementById('selectedAuthors');
   
   // 移除空标签消息
@@ -171,7 +176,7 @@ function addAuthorTag(author) {
   // 检查作者是否已存在
   const existingTags = selectedAuthorsContainer.querySelectorAll('.category-button');
   for (let i = 0; i < existingTags.length; i++) {
-    if (existingTags[i].textContent.trim().startsWith(author)) {
+    if (existingTags[i].dataset.value.toLowerCase() === author.toLowerCase()) {
       // 已存在该作者，添加闪烁动画提示用户
       existingTags[i].classList.add('tag-highlight');
       setTimeout(() => {
@@ -184,6 +189,7 @@ function addAuthorTag(author) {
   // 创建新的作者标签
   const tagElement = document.createElement('span');
   tagElement.className = 'category-button tag-appear';
+  tagElement.dataset.value = author;
   tagElement.textContent = author + " ";
   const removeTag = document.createElement("button");
   removeTag.className = "remove-tag";
@@ -319,7 +325,7 @@ function copyKeywords() {
   const keywordTags = document.getElementById('selectedKeywords').querySelectorAll('.category-button');
   const keywords = [];
   keywordTags.forEach(tag => {
-    const keywordName = tag.textContent.trim().replace('×', '').trim();
+    const keywordName = tag.dataset.value;
     keywords.push(keywordName);
   });
 
@@ -337,7 +343,7 @@ function copyAuthors() {
   const authorTags = document.getElementById('selectedAuthors').querySelectorAll('.category-button');
   const authors = [];
   authorTags.forEach(tag => {
-    const authorName = tag.textContent.trim().replace('×', '').trim();
+    const authorName = tag.dataset.value;
     authors.push(authorName);
   });
 
@@ -390,7 +396,7 @@ function saveSettings() {
   const keywordTags = document.getElementById('selectedKeywords').querySelectorAll('.category-button');
   const keywords = [];
   keywordTags.forEach(tag => {
-    const keywordName = tag.textContent.trim().replace('×', '').trim();
+    const keywordName = tag.dataset.value;
     keywords.push(keywordName);
   });
   
@@ -398,7 +404,7 @@ function saveSettings() {
   const authorTags = document.getElementById('selectedAuthors').querySelectorAll('.category-button');
   const authors = [];
   authorTags.forEach(tag => {
-    const authorName = tag.textContent.trim().replace('×', '').trim();
+    const authorName = tag.dataset.value;
     authors.push(authorName);
   });
   

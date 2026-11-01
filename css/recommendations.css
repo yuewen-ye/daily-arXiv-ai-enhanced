@@ -98,3 +98,35 @@ button:focus-visible, a:focus-visible, input:focus-visible, .paper-card:focus-vi
   .reading-header #currentDate { overflow-wrap: anywhere; }
   .reading-header .search-input-wrapper { width: 100%; top: calc(100% + 8px); }
 }
+
+/* Keep recovery and search actions beside their feedback. */
+.recommendation-toolbar, .search-results-controls, .load-notice {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px;
+}
+.search-results-controls[hidden], .load-notice[hidden] { display: none; }
+.search-results-controls label { display: flex; align-items: center; gap: 6px; min-height: 44px; cursor: pointer; }
+.search-results-controls input { accent-color: var(--accent-color); width: 18px; height: 18px; }
+.recovery-button { min-height: 44px; padding: 8px 14px; border: 1px solid var(--accent-color); border-radius: var(--radius-sm); color: var(--accent-color); background: var(--card-bg-color); cursor: pointer; }
+.recovery-button:hover { background: #ede9f6; }
+.load-notice { padding: 12px 16px; margin-bottom: 20px; background: #fff6dd; color: #694b14; border-radius: var(--radius-sm); overflow-wrap: anywhere; }
+.load-notice span { flex: 1; min-width: min(100%, 220px); }
+
+.recommendation-status { overflow-wrap: anywhere; }
+.date-picker-modal { visibility: hidden; }
+.date-picker-modal.active { visibility: visible; }
+
+.archive-freshness { margin: 16px 0 8px; color: var(--text-secondary); font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.archive-date-label { font-size: 12px; color: var(--text-secondary); }
+@media (max-width: 600px) {
+  .reading-header .date-display { flex-wrap: wrap; gap: 4px; }
+  .archive-date-label { font-size: 11px; }
+}
+
+.reading-tools, .reading-feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 16px 0; color: var(--text-secondary); font-size: 14px; }
+.reading-tools select { min-height: 44px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--text-tertiary); border-radius: var(--radius-sm); background: var(--card-bg-color); color: var(--text-primary); font: inherit; }
+.reading-hint { flex-basis: 100%; font-size: 13px; }
+.reading-feedback[hidden] { display: none; }
+.paper-reading-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 0 20px 16px; }
+.paper-details-button { min-height: 44px; color: #4d55b2; cursor: pointer; font: inherit; }
+.reading-tools select:focus-visible { outline: 3px solid var(--accent-color); outline-offset: 3px; }
+.date-picker-modal:not(.active) { display: none; }

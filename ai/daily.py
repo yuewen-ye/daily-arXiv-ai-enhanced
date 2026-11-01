@@ -5,7 +5,7 @@ The state directory contains only public-paper summaries and request counts.
 """
 
 import argparse
-from datetime import date
+from datetime import date, datetime, timezone
 import hashlib
 import json
 import os
@@ -175,7 +175,7 @@ def run(data_path, state_dir, limit=50, corpus=None, encoder=None, client=None):
     target = data_path.with_name(f"{run_date}_AI_enhanced_Chinese.jsonl")
     target.write_text("".join(json.dumps(p, ensure_ascii=False) + "\n" for p in papers), encoding="utf-8")
     # Save only public aggregate run information, never Zotero item identifiers.
-    save_json(data_path.with_name(f"{run_date}_status.json"), {"date": run_date, "papers": len(papers), "summary_limit": limit, **stats})
+    save_json(data_path.with_name(f"{run_date}_status.json"), {"date": run_date, "papers": len(papers), "summary_limit": limit, "updated_at": datetime.now(timezone.utc).isoformat(), **stats})
     index = data_path.parent.parent / "assets" / "file-list.txt"
     index.parent.mkdir(parents=True, exist_ok=True)
     index.write_text("".join(p.name + "\n" for p in sorted(data_path.parent.glob("*_AI_enhanced_Chinese.jsonl"))), encoding="utf-8")

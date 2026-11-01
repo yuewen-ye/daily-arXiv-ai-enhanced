@@ -29,3 +29,6 @@ _state/
 .pytest_cache/
 data/*.jsonl
 data/*_status.json
+
+# Local CodeGraph index
+.codegraph/

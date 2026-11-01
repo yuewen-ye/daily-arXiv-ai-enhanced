@@ -21,6 +21,6 @@ jobs:
       - run: python -m unittest discover -s ai/tests -v
         env:
           PYTHONPATH: ai
-      - run: node --test tests/recommendations.test.js
+      - run: node --test tests/*.test.js
       - run: node --check js/app.js
       - run: python scripts/build_site.py

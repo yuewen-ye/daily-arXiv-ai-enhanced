@@ -139,7 +139,10 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(sum("AI" in p for p in published), 1)
             self.assertIn(target.name, (root / "assets/file-list.txt").read_text())
             self.assertNotIn("dateAdded", target.read_text())
-            self.assertTrue((root / "data/2026-10-28_status.json").exists())
+            from datetime import datetime
+            status = json.loads((root / "data/2026-10-28_status.json").read_text())
+            self.assertIsNotNone(datetime.fromisoformat(status["updated_at"]).tzinfo)
+            self.assertEqual(status["date"], "2026-10-28")
 
     def test_publish_allowlist_excludes_raw_data_and_state(self, _filter):
         with tempfile.TemporaryDirectory() as directory:

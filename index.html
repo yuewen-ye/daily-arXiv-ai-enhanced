@@ -70,7 +70,8 @@
                 <div class="header-controls">
                     <div class="date-selector">
                         <div class="date-display">
-                            <span id="currentDate">Loading...</span>
+                            <span class="archive-date-label">归档批次（UTC）</span>
+                            <span id="currentDate">正在读取…</span>
                             <button id="calendarButton" class="icon-button" aria-label="选择日期">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M19 4H18V2H16V4H8V2H6V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V9H19V20ZM7 11H12V16H7V11Z" fill="currentColor"/>
@@ -85,7 +86,7 @@
                             </svg>
                         </button>
                         <div id="paperSearchPanel" class="search-input-wrapper" style="display: none;">
-                            <input id="textSearchInput" type="text" placeholder="搜索标题、作者或摘要…" aria-label="搜索论文" />
+                            <input id="textSearchInput" type="text" role="searchbox" placeholder="搜索标题、作者或摘要…" aria-label="搜索论文" aria-describedby="recommendationStatus" />
                             <button id="textSearchClear" class="clear-x" title="清除搜索" aria-label="清除搜索" style="display: none;">×</button>
                         </div>
                     </div>
@@ -137,10 +138,28 @@
                 </div>
             </div>
 
+            <p id="archiveFreshness" class="archive-freshness" role="status">正在读取更新记录…</p>
             <p id="demoNotice" class="demo-notice" hidden>演示数据：用于预览界面与交互，并非你的 Zotero 推荐或真实模型生成结果。</p>
+            <div class="reading-tools" aria-label="阅读进度">
+                <label for="readingView">阅读列表</label>
+                <select id="readingView">
+                    <option value="unread">未读前 50</option>
+                    <option value="all">全部论文</option>
+                    <option value="read">已读记录</option>
+                </select>
+                <span id="readingCount"></span>
+                <button id="exportReadRecords" type="button" class="recovery-button">导出已读记录</button>
+                <span class="reading-hint">仅保存在当前浏览器，标记已读不调用 AI</span>
+            </div>
+            <div id="readingFeedback" class="reading-feedback" role="status" aria-live="polite" hidden></div>
             <div class="recommendation-toolbar">
                 <p id="recommendationStatus" class="recommendation-status" role="status" aria-live="polite">正在读取论文…</p>
+                <div id="searchResultsControls" class="search-results-controls" hidden>
+                    <label><input type="checkbox" id="onlySearchMatches"> 仅看匹配</label>
+                    <button type="button" id="clearSearchResults" class="recovery-button">清空搜索</button>
+                </div>
             </div>
+            <div id="loadNotice" class="load-notice" role="status" aria-live="polite" hidden></div>
             <div class="date-picker-modal" id="datePickerModal">
                 <div class="date-picker-content">
                     <div class="date-picker-body">
@@ -230,6 +249,7 @@
     </button>
 
     <script src="js/recommendations.js"></script>
+    <script src="js/reading-queue.js"></script>
     <script src="js/app.js?v=2"></script>
 </body>
 </html> 
