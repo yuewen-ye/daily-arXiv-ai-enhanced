@@ -3155,5 +3155,12 @@
     "method": "一次学生前向输出动量混合策略，同时充当一步生成器、学生边缘速度估计器（免去第二个可训练网络）和沿教师ODE轨迹的闭式时间相关速度场。",
     "result": "在SANA-1.6B与Stable Diffusion 3.5上，一步与少步生成的生成质量和训练效率优于代表性consistency与分布匹配基线，但样本多样性存在权衡。",
     "conclusion": "结合分布级与轨迹级监督可提升一步生成的质量与效率，代价是多样性下降。"
+  },
+  "1f6854720644c25e690b4aeee7b1902d57a975d965631044b78a6d8970b14e1a": {
+    "tldr": "提出 On-Policy Mid-Training Distillation（OPMD），将中期训练由离线文本模仿改为查询驱动的主动知识获取，以缓解同一语料在不同基座上效果相反的问题。",
+    "motivation": "标准 NTP 式持续预训练把每个语料 token 都当作固定目标，忽略其对当前模型的效用；在相同 1B token 数学语料上，NTP 提升 Llama-3.2-3B 的数学表现却显著降低 Qwen3-1.7B-Base 的表现，说明相同训练序列的效果依赖模型。",
+    "method": "OPMD 在选定 anchor 位置从演进中的学生策略采样轨迹，用冻结教师给出的稠密 token 级 reverse-KL 奖励进行训练，使模型在自身实际访问的状态上学习，而非只依赖 ground-truth 前缀，从而减小 teacher-forced NTP 的训练-生成失配。",
+    "result": "在 MATH-500 与 Minerva 上，OPMD 使 Qwen 学生超过其基座表现，并优于所评估的 NTP 基线（该基线在两个基准上均退化）。摘要未说明 Llama 模型的结果或具体数值。",
+    "conclusion": "OPMD 可无缝接入 CPT 流程且不增加推理时开销，为被动式领域适应提供了一种模型感知的替代方案。"
   }
 }
